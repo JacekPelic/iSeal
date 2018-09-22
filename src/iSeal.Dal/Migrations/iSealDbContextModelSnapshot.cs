@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using iSeal.Dal;
+using iSeal.Dal.Contexts;
 
 namespace iSeal.Dal.Migrations
 {
@@ -15,9 +15,45 @@ namespace iSeal.Dal.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "2.1.2-rtm-30932")
+                .HasAnnotation("ProductVersion", "2.1.3-rtm-32065")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+            modelBuilder.Entity("iSeal.Dal.Entities.Organization", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<bool>("IsDeleted");
+
+                    b.Property<string>("Name")
+                        .IsRequired();
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Organizations");
+                });
+
+            modelBuilder.Entity("iSeal.Dal.Entities.Seal", b =>
+                {
+                    b.Property<Guid>("Guid")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<int>("Id");
+
+                    b.Property<bool>("IsDeleted");
+
+                    b.Property<int?>("OrganizationId");
+
+                    b.Property<string>("SyncKey");
+
+                    b.HasKey("Guid");
+
+                    b.HasIndex("OrganizationId");
+
+                    b.ToTable("Seals");
+                });
 
             modelBuilder.Entity("iSeal.Dal.Entities.User", b =>
                 {
@@ -44,6 +80,8 @@ namespace iSeal.Dal.Migrations
                     b.Property<string>("NormalizedUserName")
                         .HasMaxLength(256);
 
+                    b.Property<int?>("OrganizationId");
+
                     b.Property<string>("PasswordHash");
 
                     b.Property<string>("PhoneNumber");
@@ -66,6 +104,8 @@ namespace iSeal.Dal.Migrations
                         .IsUnique()
                         .HasName("UserNameIndex")
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
+
+                    b.HasIndex("OrganizationId");
 
                     b.ToTable("AspNetUsers");
                 });
@@ -178,6 +218,20 @@ namespace iSeal.Dal.Migrations
                     b.HasKey("UserId", "LoginProvider", "Name");
 
                     b.ToTable("AspNetUserTokens");
+                });
+
+            modelBuilder.Entity("iSeal.Dal.Entities.Seal", b =>
+                {
+                    b.HasOne("iSeal.Dal.Entities.Organization", "Organization")
+                        .WithMany("Seals")
+                        .HasForeignKey("OrganizationId");
+                });
+
+            modelBuilder.Entity("iSeal.Dal.Entities.User", b =>
+                {
+                    b.HasOne("iSeal.Dal.Entities.Organization", "Organization")
+                        .WithMany("Users")
+                        .HasForeignKey("OrganizationId");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

@@ -3,32 +3,34 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using AutoMapper;
 using iSeal.API.Configuration;
+using iSeal.API.Handlers;
 using iSeal.Dal;
+using iSeal.Dal.Contexts;
 using iSeal.Dal.Entities;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 
 namespace iSeal.API
 {
     public class Startup
     {
+        private readonly IHostingEnvironment _hostingEnvironment;
         private readonly RootConfiguration _apiConfiguration;
-        private readonly IConfiguration _configuration;
+        private readonly IConfiguration _configuration;        
 
-        public Startup(IConfiguration configuration)
+        public Startup(IHostingEnvironment hostingEnvironment, IConfiguration configuration)
         {
+            _hostingEnvironment = hostingEnvironment;
             _configuration = configuration;
 
             _apiConfiguration = new RootConfiguration();
@@ -41,32 +43,59 @@ namespace iSeal.API
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
-            services.AddDbContext<iSealDbContext>(ob => ob
-               .UseSqlServer(_configuration.GetConnectionString("iSealDatabase"))
-            );
+            if (_hostingEnvironment.IsEnvironment("Testing"))
+            {
+                services.AddDbContext<iSealDbContext>(
+                    ob => ob.UseInMemoryDatabase("iSealDatabase"));
 
-            services.AddIdentityCore<User>()
+                services.AddAuthentication(opt =>
+                {
+                    opt.DefaultAuthenticateScheme = "Test Scheme";
+                    opt.DefaultChallengeScheme = "Test Scheme";
+                }).AddTestAuth(o => { });
+            }
+            else
+            {
+                services.AddDbContext<iSealDbContext>(
+                    ob => ob.UseSqlServer(
+                        _configuration.GetConnectionString("iSealDatabase"))
+                    .UseLazyLoadingProxies());
+
+                //Not sure if it chceks expiration date on token - need to check that
+                //IT DOES NOT - FIX THAT
+                services.AddAuthentication(opt =>
+                {
+                    opt.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                    opt.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+                    opt.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                })
+                    .AddJwtBearer(cfg =>
+                    {
+                        cfg.SaveToken = true;
+                        cfg.TokenValidationParameters = new TokenValidationParameters()
+                        {
+                            ValidIssuer = _apiConfiguration.Issuer,
+                            ValidAudience = _apiConfiguration.Audience,
+                            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_apiConfiguration.Key)),
+                            RequireExpirationTime = true,
+                            ValidateIssuer = true,
+                            ValidateAudience = true,
+                            ValidateLifetime = true,
+                            ValidateIssuerSigningKey = true,
+                        };
+                    });
+            }            
+
+            services.AddIdentityCore<User>(opt => opt.User.RequireUniqueEmail = true)
                 .AddEntityFrameworkStores<iSealDbContext>()
                 .AddDefaultTokenProviders();
 
-            //Not sure if it chceks expiration date on token - need to check that
-            services.AddAuthentication( opt => 
-            {
-                opt.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                opt.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
-                opt.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            
 
-            })
-                .AddJwtBearer(cfg =>
-           {
-               cfg.SaveToken = true;
-               cfg.TokenValidationParameters = new TokenValidationParameters()
-               {
-                   ValidIssuer = _apiConfiguration.Issuer,
-                   ValidAudience = _apiConfiguration.Audience,
-                   IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_apiConfiguration.Key))
-               };
-           });
+            services.AddHttpContextAccessor();
+
+            Mapper.Initialize(cfg =>
+            cfg.AddProfile<Configuration.MapperConfiguration>());
 
             services.AddSingleton(_apiConfiguration);
 
@@ -85,7 +114,7 @@ namespace iSeal.API
 
             app.UseHttpsRedirection();
             app.UseMvc();
-
+            
             iSealDbInitializer.Seed().Wait();
         }
     }

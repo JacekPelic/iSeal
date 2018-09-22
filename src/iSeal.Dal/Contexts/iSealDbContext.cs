@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 
 
-namespace iSeal.Dal
+namespace iSeal.Dal.Contexts
 {
     public class iSealDbContext : IdentityDbContext<User>
     {
@@ -12,5 +12,8 @@ namespace iSeal.Dal
             : base(options)
         {
         }
+
+        public DbSet<Organization> Organizations { get; set; }
+        public DbSet<Seal> Seals { get; set; }
     }
 }
