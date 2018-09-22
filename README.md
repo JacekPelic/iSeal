@@ -1,4 +1,4 @@
-How to run the application?
+#How to run the application?
 
 1. First make sure that you have .net core sdk installed (or download it from here: https://www.microsoft.com/net/download)
 2. Application is running use Microsoft SQL Server. You can either download it, or use docker version(which I probably recommend as it much less hassle)
@@ -12,13 +12,13 @@ How to run the application?
 PS: It happened on my environment that after running application I was unable to make any http requests using Postman. Request were completed before response was ready. To fix that I had to go to the link provided in 8. and accept in chrome unsafe connection.
 PS 2: Database is seeding on each time that application is starting. Which means that on each start it clears all records in database
 
-To view the database I'm using Microsoft SQL Server Management (although it's only for windows, when your running on Linux consider this https://docs.microsoft.com/pl-pl/sql/sql-operations-studio/what-is?view=sql-server-2017)
+To view the database I'm using Microsoft SQL Server Management (although it's only for windows, when your running on Linux consider this [Microsoft SQL Operations Studio](https://docs.microsoft.com/pl-pl/sql/sql-operations-studio/what-is?view=sql-server-2017)
 To connect to database credentials are:
 server name: (local)
 login: sa
 password: Test1234!
 
-List of API calls:
+#List of API calls:
 
 (Post)
 api/auth/register - Register new User. If Organization is empty creates user with no organization. If organization or user email already exists return 409 status code
