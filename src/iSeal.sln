@@ -3,9 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.28010.2016
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "iSeal.API", "iSeal.API\iSeal.API.csproj", "{231E5937-B167-4E88-959C-9112DE3EFC51}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "iSeal.API", "iSeal.API\iSeal.API.csproj", "{231E5937-B167-4E88-959C-9112DE3EFC51}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "iSeal.Dal", "iSeal.Dal\iSeal.Dal.csproj", "{33219B70-40C5-4AE7-88AD-585CE155B156}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "iSeal.Dal", "iSeal.Dal\iSeal.Dal.csproj", "{33219B70-40C5-4AE7-88AD-585CE155B156}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "iSeal.integrationTest", "iSeal.integrationTest1\iSeal.integrationTest.csproj", "{E83B1559-C7F6-4932-BD02-D957D7264BBC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{33219B70-40C5-4AE7-88AD-585CE155B156}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{33219B70-40C5-4AE7-88AD-585CE155B156}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{33219B70-40C5-4AE7-88AD-585CE155B156}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E83B1559-C7F6-4932-BD02-D957D7264BBC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E83B1559-C7F6-4932-BD02-D957D7264BBC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E83B1559-C7F6-4932-BD02-D957D7264BBC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E83B1559-C7F6-4932-BD02-D957D7264BBC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

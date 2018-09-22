@@ -3,11 +3,14 @@ using System.ComponentModel.DataAnnotations;
 
 namespace iSeal.API.DTO
 {
-    public class CredentialModel
+    public class UserCredential
     {
         [Required]
-        public string UserName { get; set; }
+        [DataType(DataType.EmailAddress)]
+        public string Email { get; set; }
+
         [Required]
+        [DataType(DataType.Password)]
         public string Password { get; set; }
     }
 }
