@@ -16,31 +16,21 @@ PS 2: Database is seeding on each time that application is starting. Which means
 To view the database I'm using Microsoft SQL Server Management (although it's only for windows, when your running on Linux consider this [Microsoft SQL Operations Studio](https://docs.microsoft.com/pl-pl/sql/sql-operations-studio/what-is?view=sql-server-2017)
 
 To connect to database credentials are:
-
 server name: (local)
-
 login: sa
-
 password: Test1234!
 
 ##List of API calls:
 
 (Post)
-
 *api/auth/register* - Register new User. If Organization is empty creates user with no organization. If organization or user email already exists return 409 status code
 
 body:
-
 {
-
 	"Email" : "ass@gmail.com",
-	
 	"Password" : "!Se4lP4ss",
-	
 	"PhoneNumber" : "123456789",
-	
 	"Organization" : "yourMom"
-	
 }
 
 <br>
